@@ -16,7 +16,7 @@ export class ProductService {
 
 
   public GetDataArticle(): Observable<Article[]> {
-    return this.http.get<Article[]>(`${this.url}/Home/GetArticles`);
+    return this.http.get<Article[]>(`${this.url}/Article/GetArticles`);
   }
   public createArticle(article: ArticleDTO): Observable<ArticleDTO> {
     return this.http.post<ArticleDTO>(`${this.url}/Home/AddArticle`, article);

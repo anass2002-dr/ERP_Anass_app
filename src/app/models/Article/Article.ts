@@ -1,10 +1,14 @@
+import { Familly } from "../Familly/Familly";
+
 export class Article {
   idArticle?: number;
-  ArticleRef = ""
-  ArticleName = "";
-  DescriptionArticle = "";
-  PurchasePrice = 0;
-  SellingPrice = 0;
-  familyName = "";
-
+  articleRef: string = "";
+  articleName: string = "";
+  descriptionArticle: string = "";
+  purchasePrice: number = 0;
+  sellingPrice: number = 0;
+  familyID: number = 0;
+  familly: Familly = new Familly();
+  stockQuantity: number = 0;
 }
+
