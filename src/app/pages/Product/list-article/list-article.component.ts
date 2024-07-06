@@ -3,13 +3,9 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { Article } from 'src/app/models/Article/Article';
+import { ProductService } from 'src/app/Services/Articles/product.service';
 
 @Component({
   selector: 'app-list-article',
@@ -17,18 +13,31 @@ import { Router, RouterLink } from '@angular/router';
   styleUrls: ['./list-article.component.css'],
 })
 export class ListArticleComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
-
+  displayedColumns: string[] = ['position', 'name', 'familyName', 'stockQuantity', 'purchasePrice', 'sellingPrice', 'update', 'delete'];
+  dataSource = new MatTableDataSource();
+  list: Article[] = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private _liveAnnouncer: LiveAnnouncer, private router: Router) { }
+  constructor(private _liveAnnouncer: LiveAnnouncer, private router: Router, private productService: ProductService) { }
 
-  ngOnInit(): void { }
-  onLinkClick(event: Event) {
-    console.log('router clicked')
+  ngOnInit(): void {
+    this.productService.GetDataArticle().subscribe(
+      data => {
+        console.log(data);
+        this.list = data;
+        this.dataSource.data = this.list;
+      },
+      error => {
+        console.error('Error fetching data', error);
+      }
+    );
   }
+
+  onLinkClick(event: Event) {
+    console.log('router clicked');
+  }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -50,34 +59,24 @@ export class ListArticleComponent implements OnInit, AfterViewInit {
       this._liveAnnouncer.announce('Sorting cleared');
     }
   }
-}
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
+  updateArticle(article: Article) {
+    // Navigate to the update article component with the article ID
+    this.router.navigate(['/add-article', article.idArticle]);
+  }
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-  { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-  { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-  { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-  { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-  { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-  { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-  { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-  { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-  { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-  { position: 11, name: 'Sodium', weight: 22.9897, symbol: 'Na' },
-  { position: 12, name: 'Magnesium', weight: 24.305, symbol: 'Mg' },
-  { position: 13, name: 'Aluminum', weight: 26.9815, symbol: 'Al' },
-  { position: 14, name: 'Silicon', weight: 28.0855, symbol: 'Si' },
-  { position: 15, name: 'Phosphorus', weight: 30.9738, symbol: 'P' },
-  { position: 16, name: 'Sulfur', weight: 32.065, symbol: 'S' },
-  { position: 17, name: 'Chlorine', weight: 35.453, symbol: 'Cl' },
-  { position: 18, name: 'Argon', weight: 39.948, symbol: 'Ar' },
-  { position: 19, name: 'Potassium', weight: 39.0983, symbol: 'K' },
-  { position: 20, name: 'Calcium', weight: 40.078, symbol: 'Ca' },
-];
+  deleteArticle(article: Article) {
+    if (confirm(`Are you sure you want to delete the article: ${article.articleName}?`)) {
+      this.productService.deleteArticle(article.idArticle).subscribe(
+        () => {
+          this.list = this.list.filter(a => a.idArticle !== article.idArticle);
+          this.dataSource.data = this.list;
+          console.log('Article deleted successfully');
+        },
+        error => {
+          console.error('Error deleting article', error);
+        }
+      );
+    }
+  }
+}

@@ -18,7 +18,16 @@ export class ProductService {
   public GetDataArticle(): Observable<Article[]> {
     return this.http.get<Article[]>(`${this.url}/Article/GetArticles`);
   }
-  public createArticle(article: ArticleDTO): Observable<ArticleDTO> {
-    return this.http.post<ArticleDTO>(`${this.url}/Home/AddArticle`, article);
+  public createArticle(article: Article): Observable<Article> {
+    return this.http.post<Article>(`${this.url}/Article/AddArticle`, article);
+  }
+  public deleteArticle(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/Article/DeleteArticle/${id}`);
+  }
+  public updateArticle(article: Article): Observable<Article> {
+    return this.http.put<Article>(`${this.url}/Article/UpdateArticle/${article.idArticle}`, article);
+  }
+  public getArticleById(id: number): Observable<Article> {
+    return this.http.get<Article>(`${this.url}/Article//GetArticleById/${id}`);
   }
 }

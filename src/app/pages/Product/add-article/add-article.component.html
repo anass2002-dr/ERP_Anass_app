@@ -13,6 +13,14 @@
       <div class="card-body">
         <h5 class="card-title">New Article</h5>
         <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="row g-3">
+          <!-- idArticle?: number
+          ArticleRef = "";
+          ArticleName = "";
+          DescriptionArticle = "";
+          PurchasePrice = 0;
+          SellingPrice = 0;
+          FamilyID = "";
+          StockQuantity = 0; -->
           <div class="col-6">
             <label for="ArticleRef" class="form-label">Article Ref</label>
             <input type="text" id="ArticleRef" formControlName="ArticleRef" class="form-control">
@@ -35,10 +43,8 @@
           <div class="col-md-6">
             <label for="FamilySelect" class="form-label">Product Family</label>
             <select id="FamilySelect" formControlName="idFamily" class="form-select">
-              <option value="">Select a family</option>
-              <option value="1">Computer</option>
-              <option value="2">TV</option>
-              <option value="3">Cleaning machine</option>
+              <option *ngFor="let family of listFamilly" value="{{family.idFamilly}}">{{family.familyName}}</option>
+
             </select>
             <div *ngIf="articleForm.get('idFamily')?.invalid && articleForm.get('idFamily')?.touched || showAlert">
               <small class="text-danger" *ngIf="articleForm.get('idFamily')?.errors?.['required']">Product Family
@@ -53,6 +59,18 @@
               <small class="text-danger" *ngIf="articleForm.get('DescriptionArticle')?.errors?.['required']">Description
                 is
                 required.</small>
+            </div>
+          </div>
+          <div class="col-6">
+            <label for="stockQuantity" class="form-label">stock Quantity</label>
+            <input type="text" id="stockQuantity" formControlName="stockQuantity" class="form-control">
+            <div
+              *ngIf="articleForm.get('stockQuantity')?.invalid && articleForm.get('stockQuantity')?.touched || showAlert">
+              <small class="text-danger" *ngIf="articleForm.get('stockQuantity')?.errors?.['required']">Purchase Price
+                is
+                required.</small>
+              <small class="text-danger" *ngIf="articleForm.get('stockQuantity')?.errors?.['pattern']">Invalid price
+                format.</small>
             </div>
           </div>
           <div class="col-6">

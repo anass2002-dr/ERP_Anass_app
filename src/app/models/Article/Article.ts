@@ -1,7 +1,7 @@
 import { Familly } from "../Familly/Familly";
 
 export class Article {
-  idArticle?: number;
+  idArticle: number = 0;
   articleRef: string = "";
   articleName: string = "";
   descriptionArticle: string = "";
